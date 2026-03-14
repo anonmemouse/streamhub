@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamHub - webOS Streaming Launcher</title>
+    <style>
+        :root {
+            --color-white: #ffffff;
+            --color-black: #000000;
+            --color-cream-50: #fcfcf9;
+            --color-gray-200: #f5f5f5;
+            --color-slate-500: #626c71;
+            --color-brown-600: #5e5240;
+            --color-charcoal-700: #1f2121;
+            --color-charcoal-800: #262828;
+            --color-slate-900: #133c3b;
+            --color-teal-300: #32b8c6;
+            --color-teal-400: #2da6b2;
+            --color-teal-500: #218088;
+            --color-teal-600: #1d7480;
+            --color-teal-700: #1a6873;
+            --color-teal-800: #299aa1;
+            --color-red-400: #ff5459;
+            --color-red-500: #c0152f;
+            --color-orange-400: #e68161;
+            --color-orange-500: #a84b2f;
+
+            --color-brown-600-rgb: 94, 82, 64;
+            --color-teal-500-rgb: 33, 128, 141;
+            --color-slate-900-rgb: 19, 52, 59;
+
+            --color-background: #0f172a;
+            --color-surface: #1e293b;
+            --color-text: #f1f5f9;
+            --color-text-secondary: #cbd5e1;
+            --color-text-muted: #94a3b8;
+            --color-primary: #38bdf8;
+            --color-primary-hover: #0ea5e9;
+            --color-primary-active: #0284c7;
+            --color-secondary: rgba(94, 82, 64, 0.12);
+            --color-secondary-hover: rgba(94, 82, 64, 0.2);
+            --color-border: rgba(94, 82, 64, 0.2);
+            --color-card-border: rgba(94, 82, 64, 0.12);
+            --color-error: #c0152f;
+            --color-success: #218088;
+            --color-warning: #a84b2f;
+            --color-info: #626c71;
+            --color-focus-ring: rgba(56, 189, 248, 0.4);
+
+            --focus-ring: 0 0 0 3px var(--color-focus-ring);
+            --focus-outline: 2px solid var(--color-primary);
+
+            --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            --font-size-base: 14px;
+            --font-size-sm: 12px;
+            --font-size-md: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 18px;
+            --font-size-2xl: 20px;
+            --font-size-3xl: 24px;
+            --font-size-4xl: 30px;
+            --font-weight-normal: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 550;
+            --font-weight-bold: 600;
+            --line-height-tight: 1.2;
+            --line-height-normal: 1.5;
+
+            --space-0: 0;
+            --space-1: 1px;
+            --space-2: 2px;
+            --space-4: 4px;
+            --space-6: 6px;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --space-32: 32px;
+
+            --radius-sm: 6px;
+            --radius-base: 8px;
+            --radius-md: 10px;
+            --radius-lg: 12px;
+            --radius-full: 9999px;
+
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+
+            --duration-fast: 150ms;
+            --duration-normal: 250ms;
+            --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: var(--font-size-base);
+            font-family: var(--font-family-base);
+            line-height: var(--line-height-normal);
+            color: var(--color-text);
+            background-color: var(--color-background);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-background);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: var(--font-weight-semibold);
+            line-height: var(--line-height-tight);
+            color: var(--color-text);
+        }
+
+        h1 { font-size: var(--font-size-4xl); }
+        h2 { font-size: var(--font-size-3xl); }
+        h3 { font-size: var(--font-size-2xl); }
+        h4 { font-size: var(--font-size-xl); }
+
+        p { margin: 0 0 var(--space-16) 0; }
+
+        a {
+            color: var(--color-primary);
+            text-decoration: none;
+            transition: color var(--duration-fast) var(--ease-standard);
+        }
+
+        a:hover { color: var(--color-primary-hover); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-8) var(--space-16);
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-base);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--duration-normal) var(--ease-standard);
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+        .btn--primary {
+            background: var(--color-primary);
+            color: var(--color-charcoal-700);
+        }
+
+        .btn--primary:hover { background: var(--color-primary-hover); }
+        .btn--primary:active { background: var(--color-primary-active); }
+
+        .btn--secondary {
+            background: var(--color-secondary);
+            color: var(--color-text);
+        }
+
+        .btn--secondary:hover { background: var(--color-secondary-hover); }
+
+        .btn--outline {
+            background: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+
+        .btn--outline:hover { background: var(--color-secondary); }
+
+        .btn--sm { padding: var(--space-4) var(--space-12); font-size: var(--font-size-sm); }
+        .btn--lg { padding: var(--space-10) var(--space-20); font-size: var(--font-size-lg); }
+        .btn--full-width { width: 100%; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: var(--space-8) var(--space-12);
+            font-size: var(--font-size-md);
+            color: var(--color-text);
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
+        }
+
+        .form-control:focus {
+            border-color: var(--color-primary);
+            outline: var(--focus-outline);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-8);
+            font-weight: var(--font-weight-medium);
+            font-size: var(--font-size-sm);
+        }
+
+        .form-group { margin-bottom: var(--space-16); }
+
+        .card {
+            background-color: var(--color-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-card-border);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            transition: box-shadow var(--duration-normal);
+        }
+
+        .card:hover { box-shadow: var(--shadow-md); }
+
+        .card__body { padding: var(--space-16); }
+        .card__header { padding: var(--space-16); border-bottom: 1px solid var(--color-card-border); }
+        .card__footer { padding: var(--space-16); border-top: 1px solid var(--color-card-border); }
+
+        .container {
+            width: 100%;
+            margin-right: auto;
+            margin-left: auto;
+            padding-right: var(--space-16);
+            padding-left: var(--space-16);
+        }
+
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .flex-wrap { flex-wrap: wrap; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-4 { gap: var(--space-4); }
+        .gap-8 { gap: var(--space-8); }
+        .gap-16 { gap: var(--space-16); }
+
+        .mt-8 { margin-top: var(--space-8); }
+        .mb-8 { margin-bottom: var(--space-8); }
+        .mb-16 { margin-bottom: var(--space-16); }
+        .py-16 { padding-top: var(--space-16); padding-bottom: var(--space-16); }
+        .px-16 { padding-left: var(--space-16); padding-right: var(--space-16); }
+
+        .hidden { display: none; }
+
+        /* STREAMHUB SPECIFIC */
+
+        .header {
+            background: linear-gradient(135deg, #1a2c3a 0%, #0f172a 100%);
+            padding: var(--space-20) var(--space-16);
+            border-bottom: 1px solid var(--color-border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .header__content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header__title {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-primary);
+            margin: 0;
+        }
+
+        .header__subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-muted);
+            margin-top: var(--space-4);
+        }
+
+        .regions {
+            display: flex;
+            gap: var(--space-8);
+        }
+
+        .region-btn {
+            padding: var(--space-6) var(--space-12);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-border);
+            background: transparent;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            transition: all var(--duration-fast);
+        }
+
+        .region-btn:hover {
+            background: var(--color-secondary);
+            color: var(--color-text);
+        }
+
+        .region-btn.active {
+            background: var(--color-primary);
+            color: var(--color-charcoal-700);
+            border-color: var(--color-primary);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: var(--space-16);
+            padding: var(--space-16);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-16);
+        }
+
+        .sidebar__section {
+            background-color: var(--color-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-card-border);
+            overflow: hidden;
+        }
+
+        .sidebar__title {
+            padding: var(--space-12) var(--space-16);
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-md);
+            background: linear-gradient(135deg, #1e2a3a, #1a1f2e);
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-primary);
+        }
+
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-8);
+            padding: var(--space-12);
+        }
+
+        .provider-btn {
+            padding: var(--space-8);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            color: var(--color-text);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-4);
+            transition: all var(--duration-fast);
+            text-align: center;
+        }
+
+        .provider-btn:hover {
+            background: var(--color-secondary);
+            border-color: var(--color-primary);
+        }
+
+        .provider-btn.active {
+            background: var(--color-primary);
+            color: var(--color-charcoal-700);
+            border-color: var(--color-primary);
+        }
+
+        .provider-icon {
+            font-size: var(--font-size-xl);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-16);
+        }
+
+        .search-section {
+            background-color: var(--color-surface);
+            padding: var(--space-16);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-card-border);
+        }
+
+        .search-box {
+            display: flex;
+            gap: var(--space-8);
+            margin-bottom: var(--space-12);
+        }
+
+        .search-box input {
+            flex: 1;
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-16);
+        }
+
+        .media-card {
+            background-color: var(--color-surface);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--color-card-border);
+            transition: all var(--duration-normal);
+            cursor: pointer;
+        }
+
+        .media-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--color-primary);
+        }
+
+        .media-poster {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            background: linear-gradient(135deg, #1e3a4a, #0f2a3a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-muted);
+            font-size: var(--font-size-2xl);
+            overflow: hidden;
+        }
+
+        .media-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .media-info {
+            padding: var(--space-12);
+        }
+
+        .media-title {
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text);
+            margin-bottom: var(--space-4);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .media-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-8);
+        }
+
+        .media-year {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-muted);
+        }
+
+        .media-rating {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--font-size-sm);
+            color: var(--color-warning);
+        }
+
+        .media-providers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            margin-top: var(--space-8);
+        }
+
+        .provider-badge {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-sm);
+            background: var(--color-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-sm);
+            border: 1px solid var(--color-border);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: var(--space-24);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-16);
+            right: var(--space-16);
+            background: none;
+            border: none;
+            color: var(--color-text);
+            font-size: var(--font-size-2xl);
+            cursor: pointer;
+        }
+
+        .detail-header {
+            display: flex;
+            gap: var(--space-20);
+            margin-bottom: var(--space-20);
+        }
+
+        .detail-poster {
+            width: 120px;
+            height: 180px;
+            background: linear-gradient(135deg, #1e3a4a, #0f2a3a);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .detail-info h2 {
+            margin-bottom: var(--space-4);
+            color: var(--color-primary);
+        }
+
+        .detail-meta {
+            display: flex;
+            gap: var(--space-12);
+            margin-bottom: var(--space-12);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .detail-overview {
+            margin-bottom: var(--space-16);
+            color: var(--color-text-secondary);
+            line-height: var(--line-height-normal);
+        }
+
+        .availability-section {
+            margin-top: var(--space-16);
+        }
+
+        .availability-title {
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--space-8);
+            color: var(--color-primary);
+        }
+
+        .provider-availability {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-8);
+        }
+
+        .provider-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-8);
+            background: var(--color-secondary);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-border);
+        }
+
+        .provider-item-name {
+            font-weight: var(--font-weight-medium);
+        }
+
+        .provider-item-type {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .provider-item-action {
+            display: flex;
+            gap: var(--space-8);
+            align-items: center;
+        }
+
+        .watch-btn {
+            padding: var(--space-6) var(--space-12);
+            border-radius: var(--radius-base);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.8) 0%, rgba(6, 182, 212, 0.7) 100%);
+            color: #0a0e1a;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            transition: all var(--duration-fast);
+        }
+
+        .watch-btn:hover {
+            background: linear-gradient(135deg, #38bdf8 0%, #06b6d4 100%);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .status-badge {
+            padding: var(--space-2) var(--space-6);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            background: rgba(33, 128, 141, 0.15);
+            color: var(--color-success);
+            border: 1px solid rgba(33, 128, 141, 0.25);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: var(--space-20);
+            right: var(--space-20);
+            background: var(--color-surface);
+            color: var(--color-text);
+            padding: var(--space-16);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-lg);
+            z-index: 2000;
+            max-width: 300px;
+            animation: slideIn 300ms var(--ease-standard);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--space-32);
+            color: var(--color-text-muted);
+        }
+
+        .empty-state h3 {
+            margin-bottom: var(--space-8);
+            color: var(--color-text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .provider-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .media-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .detail-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .detail-poster {
+                width: 100px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header__content">
+            <div>
+                <h1 class="header__title">🎬 StreamHub</h1>
+                <p class="header__subtitle">Find your show on webOS TV</p>
+            </div>
+            <div class="regions">
+                <button class="region-btn active" data-region="US">🇺🇸 US</button>
+                <button class="region-btn" data-region="IL">🇮🇱 Israel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <aside class="sidebar">
+            <!-- Providers Filter -->
+            <div class="sidebar__section">
+                <div class="sidebar__title">Streaming Providers</div>
+                <div class="provider-grid" id="providersContainer"></div>
+            </div>
+
+            <!-- Stats -->
+            <div class="sidebar__section">
+                <div class="sidebar__title">Stats</div>
+                <div style="padding: var(--space-12);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-8); font-size: var(--font-size-sm);">
+                        <span>Total Available:</span>
+                        <strong id="totalCount">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: var(--font-size-sm);">
+                        <span>Selected:</span>
+                        <strong id="selectedCount">0</strong>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="searchInput" 
+                        placeholder="Search for movies or TV shows..."
+                    >
+                    <button class="btn btn--primary">Search</button>
+                </div>
+                <div style="display: flex; gap: var(--space-8); flex-wrap: wrap;">
+                    <button class="btn btn--outline" data-genre="trending">Trending</button>
+                    <button class="btn btn--outline" data-genre="action">Action</button>
+                    <button class="btn btn--outline" data-genre="comedy">Comedy</button>
+                    <button class="btn btn--outline" data-genre="drama">Drama</button>
+                    <button class="btn btn--outline" data-genre="scifi">Sci-Fi</button>
+                </div>
+            </div>
+
+            <!-- Media Grid -->
+            <div id="mediaContainer" class="media-grid"></div>
+        </main>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <div class="detail-header">
+                <div class="detail-poster" id="detailPoster"></div>
+                <div class="detail-info">
+                    <h2 id="detailTitle"></h2>
+                    <div class="detail-meta">
+                        <span id="detailYear"></span>
+                        <span id="detailGenres"></span>
+                        <span id="detailRating">⭐ 0.0</span>
+                    </div>
+                    <div class="detail-overview" id="detailOverview"></div>
+                    <div class="availability-section">
+                        <div class="availability-title">Available On:</div>
+                        <div class="provider-availability" id="providerList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast hidden" id="toast"></div>
+
+    <script>
+        const app = {
+            region: 'US',
+            selectedProviders: new Set(),
+            currentMedia: [],
+            allMedia: [],
+            
+            providers: {
+                US: [
+                    { id: 'netflix', name: 'Netflix', icon: '🎬', status: 'active' },
+                    { id: 'disneyplus', name: 'Disney+', icon: '🏰', status: 'active' },
+                    { id: 'hulu', name: 'Hulu', icon: '📺', status: 'active' },
+                    { id: 'prime', name: 'Prime', icon: '🎁', status: 'active' },
+                    { id: 'max', name: 'Max', icon: '📻', status: 'active' },
+                    { id: 'appletv', name: 'Apple TV+', icon: '🍎', status: 'manual' },
+                    { id: 'youtube', name: 'YouTube', icon: '📹', status: 'active' },
+                    { id: 'paramount', name: 'Paramount+', icon: '⭐', status: 'manual' },
+                ],
+                IL: [
+                    { id: 'netflix', name: 'Netflix', icon: '🎬', status: 'active' },
+                    { id: 'yes', name: 'YES', icon: '📡', status: 'manual' },
+                    { id: 'hot', name: 'HOT', icon: '🔥', status: 'manual' },
+                    { id: 'youtube', name: 'YouTube', icon: '📹', status: 'active' },
+                ]
+            },
+
+            mockMedia: [
+                {
+                    id: '550',
+                    title: 'Fight Club',
+                    year: 1999,
+                    rating: 8.8,
+                    genres: ['Drama', 'Thriller'],
+                    overview: 'An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.',
+                    providers: ['netflix', 'prime'],
+                },
+                {
+                    id: '278',
+                    title: 'The Shawshank Redemption',
+                    year: 1994,
+                    rating: 9.3,
+                    genres: ['Drama'],
+                    overview: 'Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.',
+                    providers: ['netflix', 'disneyplus'],
+                },
+                {
+                    id: '238',
+                    title: 'The Godfather',
+                    year: 1972,
+                    rating: 9.2,
+                    genres: ['Drama', 'Crime'],
+                    overview: 'The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his youngest son.',
+                    providers: ['prime', 'disneyplus'],
+                },
+                {
+                    id: '240',
+                    title: 'The Godfather Part II',
+                    year: 1974,
+                    rating: 9.0,
+                    genres: ['Drama', 'Crime'],
+                    overview: 'The early life and family tree of Vito Corleone is presented, along with his rise and fall to power.',
+                    providers: ['prime'],
+                },
+                {
+                    id: '680',
+                    title: 'Pulp Fiction',
+                    year: 1994,
+                    rating: 8.9,
+                    genres: ['Drama', 'Crime'],
+                    overview: 'The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.',
+                    providers: ['netflix', 'max'],
+                },
+                {
+                    id: '155',
+                    title: 'The Dark Knight',
+                    year: 2008,
+                    rating: 9.0,
+                    genres: ['Action', 'Crime', 'Drama'],
+                    overview: 'When the menace known as the Joker wreaks havoc on Gotham, Batman must accept one of the greatest psychological tests to fight injustice.',
+                    providers: ['max', 'prime'],
+                },
+                {
+                    id: '808',
+                    title: 'Inception',
+                    year: 2010,
+                    rating: 8.8,
+                    genres: ['Action', 'Sci-Fi', 'Thriller'],
+                    overview: 'A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea.',
+                    providers: ['netflix', 'max', 'prime'],
+                },
+                {
+                    id: '76341',
+                    title: 'Mad Max Fury Road',
+                    year: 2015,
+                    rating: 8.1,
+                    genres: ['Action', 'Adventure', 'Sci-Fi'],
+                    overview: 'In a post-apocalyptic wasteland, a woman rebels against a tyrannical ruler in search for her homeland.',
+                    providers: ['hulu', 'prime'],
+                },
+            ],
+
+            init() {
+                this.renderProviders();
+                this.allMedia = [...this.mockMedia];
+                this.currentMedia = [...this.mockMedia];
+                this.renderMedia();
+                this.setupEventListeners();
+                this.updateStats();
+            },
+
+            setupEventListeners() {
+                // Region selection
+                document.querySelectorAll('.region-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.region = e.target.dataset.region;
+                        this.renderProviders();
+                        this.resetFilters();
+                    });
+                });
+
+                // Provider selection
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('provider-btn')) {
+                        const providerId = e.target.dataset.provider;
+                        e.target.classList.toggle('active');
+                        if (e.target.classList.contains('active')) {
+                            this.selectedProviders.add(providerId);
+                        } else {
+                            this.selectedProviders.delete(providerId);
+                        }
+                        this.filterMedia();
+                    }
+                });
+
+                // Search
+                document.querySelector('.search-box button').addEventListener('click', () => {
+                    const query = document.getElementById('searchInput').value.toLowerCase();
+                    if (query) {
+                        this.currentMedia = this.allMedia.filter(m => 
+                            m.title.toLowerCase().includes(query)
+                        );
+                        this.renderMedia();
+                    }
+                });
+
+                // Genre buttons
+                document.querySelectorAll('[data-genre]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.showToast(`Filtered by ${btn.textContent}`);
+                        this.renderMedia();
+                    });
+                });
+
+                // Modal close
+                document.getElementById('closeModal').addEventListener('click', () => {
+                    document.getElementById('detailModal').classList.remove('active');
+                });
+
+                document.getElementById('detailModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'detailModal') {
+                        document.getElementById('detailModal').classList.remove('active');
+                    }
+                });
+            },
+
+            renderProviders() {
+                const container = document.getElementById('providersContainer');
+                container.innerHTML = this.providers[this.region]
+                    .map(p => `
+                        <button class="provider-btn" data-provider="${p.id}">
+                            <span class="provider-icon">${p.icon}</span>
+                            <span>${p.name}</span>
+                        </button>
+                    `)
+                    .join('');
+            },
+
+            renderMedia() {
+                const container = document.getElementById('mediaContainer');
+                
+                const filtered = this.selectedProviders.size > 0
+                    ? this.currentMedia.filter(m => 
+                        m.providers.some(p => this.selectedProviders.has(p))
+                    )
+                    : this.currentMedia;
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state" style="grid-column: 1/-1;">
+                            <h3>No shows found</h3>
+                            <p>Try adjusting your filters</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = filtered
+                    .map(m => `
+                        <div class="media-card" onclick="app.showDetail(${m.id})">
+                            <div class="media-poster">🎬</div>
+                            <div class="media-info">
+                                <div class="media-title">${m.title}</div>
+                                <div class="media-meta">
+                                    <span class="media-year">${m.year}</span>
+                                    <span class="media-rating">⭐ ${m.rating}</span>
+                                </div>
+                                <div class="media-providers">
+                                    ${m.providers.map(p => {
+                                        const provider = this.providers[this.region].find(prov => prov.id === p);
+                                        return provider ? `<div class="provider-badge" title="${provider.name}">${provider.icon}</div>` : '';
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `)
+                    .join('');
+
+                this.updateStats();
+            },
+
+            filterMedia() {
+                this.renderMedia();
+            },
+
+            resetFilters() {
+                this.selectedProviders.clear();
+                document.querySelectorAll('.provider-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.currentMedia = [...this.allMedia];
+                this.renderMedia();
+            },
+
+            showDetail(id) {
+                const media = this.allMedia.find(m => m.id === String(id));
+                if (!media) return;
+
+                document.getElementById('detailTitle').textContent = media.title;
+                document.getElementById('detailYear').textContent = media.year;
+                document.getElementById('detailGenres').textContent = media.genres.join(', ');
+                document.getElementById('detailRating').textContent = `⭐ ${media.rating}`;
+                document.getElementById('detailOverview').textContent = media.overview;
+
+                const providerList = document.getElementById('providerList');
+                providerList.innerHTML = media.providers
+                    .map(pId => {
+                        const provider = this.providers[this.region].find(p => p.id === pId) || { id: pId, name: pId, icon: '?' };
+                        return `
+                            <div class="provider-item">
+                                <div>
+                                    <div class="provider-item-name">${provider.icon} ${provider.name}</div>
+                                    <div class="provider-item-type">Subscription</div>
+                                </div>
+                                <div class="provider-item-action">
+                                    <span class="status-badge">Available</span>
+                                    <button class="watch-btn" onclick="app.watchOnProvider('${provider.name}')">Watch</button>
+                                </div>
+                            </div>
+                        `;
+                    })
+                    .join('');
+
+                document.getElementById('detailModal').classList.add('active');
+            },
+
+            watchOnProvider(provider) {
+                this.showToast(`Opening ${provider} on your webOS TV...`);
+                setTimeout(() => {
+                    this.showToast(`Search for "${this.allMedia[0]?.title || 'content'}" on ${provider}`);
+                }, 1500);
+            },
+
+            updateStats() {
+                document.getElementById('totalCount').textContent = this.allMedia.length;
+                document.getElementById('selectedCount').textContent = this.selectedProviders.size;
+            },
+
+            showToast(message) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.classList.remove('hidden');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+        };
+
+        app.init();
+    </script>
+</body>
+</html>
